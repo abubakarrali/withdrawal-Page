@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Retirada de Fundos — Demo (HTML + CSS)</title>
+<style>
+  :root{
+    --bg1: #0f172a;
+    --card: #ffffff;
+    --accent: #4fbeff;
+    --muted: #6b7280;
+    --danger: #ef4444;
+    --radius: 12px;
+  }
+
+  *{box-sizing: border-box}
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(180deg,#071033 0%, #0b2240 60%);
+    color: #0b1220;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:900px;
+    display:grid;
+    grid-template-columns: 1fr 420px;
+    gap:24px;
+    align-items:start;
+  }
+
+  /* Cartão de informação à esquerda */
+  .info {
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    border-radius: var(--radius);
+    padding:28px;
+    color: #e6eef8;
+    box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  }
+  .brand { display:flex; gap:12px; align-items:center; margin-bottom:18px; }
+  .logo{
+    width:56px; height:56px; border-radius:10px;
+    background: linear-gradient(135deg,#4fbeff,#7ee2b8);
+    display:flex;align-items:center;justify-content:center;font-weight:700;color:#052134;
+    box-shadow: 0 6px 18px rgba(79,190,255,0.18);
+  }
+  h1{ margin:0 0 6px; font-size:20px; color: #eaf6ff; }
+  p.lead { margin:0 0 18px; color:var(--muted); font-size:14px; line-height:1.5; }
+
+  .balance {
+    display:flex; justify-content:space-between; gap:12px; align-items:center;
+    background: rgba(255,255,255,0.02); padding:14px; border-radius:10px;
+    margin-bottom:14px;
+  }
+  .bal-left { font-size:13px; color:var(--muted); }
+  .bal-amount { font-size:22px; font-weight:700; color:#e9fbff; }
+
+  .tip { font-size:13px; color:var(--muted); margin-top:8px; }
+
+  /* Cartão de formulário à direita */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding:22px;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.25);
+  }
+  .card h2{ margin:0 0 12px; font-size:18px; color:#07203a; }
+  label{ display:block; font-size:13px; color:#374151; margin:10px 0 6px; }
+  input, select {
+    width:100%;
+    padding:11px 12px;
+    border-radius:10px;
+    border:1px solid #e6eef8;
+    background: #fbfdff;
+    font-size:14px;
+    color:#07203a;
+  }
+  input:focus, select:focus {
+    outline: 3px solid rgba(79,190,255,0.12);
+    border-color: var(--accent);
+  }
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  .btn {
+    display:inline-block;
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:0;
+    background: linear-gradient(90deg,var(--accent), #7ee2b8);
+    color:#042033;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:14px;
+    text-align:center;
+    text-decoration:none;
+  }
+
+  .secondary {
+    background:transparent;
+    border:1px solid #e6eef8;
+    color:#07203a;
+    margin-top:10px;
+    padding:10px;
+  }
+
+  .small { font-size:12px; color:var(--muted); margin-top:8px; }
+
+  /* Tela de sucesso */
+  #success {
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: rgba(2,8,23,0.6);
+    opacity:0;
+    pointer-events:none;
+    transform:scale(0.98);
+    transition: all 200ms ease;
+  }
+  #success:target {
+    opacity:1;
+    pointer-events:auto;
+    transform:scale(1);
+  }
+  .success-card{
+    width:100%;
+    max-width:460px;
+    background:#fff;
+    padding:22px;
+    border-radius:12px;
+    text-align:center;
+    box-shadow:0 20px 50px rgba(2,8,23,0.6);
+  }
+  .success-card h3{ margin:0 0 6px; color:#052134; }
+  .success-card p{ margin:0 0 16px; color:var(--muted); font-size:14px; }
+
+  .muted-row{ display:flex; justify-content:space-between; gap:12px; font-size:14px; margin:10px 0; color:#0b1220; }
+  .close-link{
+    display:inline-block; margin-top:14px; text-decoration:none; padding:10px 14px; border-radius:10px;
+    background:transparent; border:1px solid #e6eef8; color:#062034;
+  }
+
+  @media (max-width:880px){
+    .wrap{ grid-template-columns: 1fr; }
+  }
+  input:invalid { box-shadow: 0 0 0 3px rgba(239,68,68,0.08); border-color: #f87171; }
+  input::-webkit-inner-spin-button, input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+</style>
+</head>
+<body>
+  <main class="wrap" id="top">
+    <section class="info">
+      <div class="brand">
+        <div class="logo">W</div>
+        <div>
+          <h1>WavePay — Retirada</h1>
+          <div style="color:var(--muted);font-size:13px">Saques rápidos e claros (demonstração)</div>
+        </div>
+      </div>
+      <p class="lead">Preencha os dados da conta e o valor para solicitar uma retirada. Esta página demonstra um fluxo funcional usando apenas HTML + CSS — a confirmação após o envio é apenas para demonstração.</p>
+      <div class="balance">
+        <div class="bal-left">Saldo disponível</div>
+        <div class="bal-amount">R$ 58.430,25</div>
+      </div>
+      <div class="tip">
+        • Saque mínimo: R$ 1.000 · Processamento: 1–3 dias úteis (demonstração).<br>
+        • Esta página não envia dinheiro — conecte-se a um servidor para processar.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Solicitar Retirada</h2>
+      <form action="#success" method="post" novalidate>
+        <label for="fullname">Nome completo</label>
+        <input id="fullname" name="fullname" type="text" placeholder="Maria Silva" required />
+
+        <label for="account">Número da conta</label>
+        <input id="account" name="account" type="text" inputmode="numeric" pattern="\d{6,20}" placeholder="0123456789" required title="Digite apenas números (6-20 dígitos)" />
+
+        <div class="grid-2">
+          <div>
+            <label for="amount">Valor (R$)</label>
+            <input id="amount" name="amount" type="number" min="1000" step="0.01" placeholder="1000.00" required />
+          </div>
+          <div>
+            <label for="method">Método</label>
+            <select id="method" name="method" required>
+              <option value="">Escolha o método</option>
+              <option value="bank">Transferência bancária</option>
+              <option value="mobile">Carteira digital</option>
+              <option value="usdt">USDT (Cripto)</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="note">Observação (opcional)</label>
+        <input id="note" name="note" type="text" placeholder="Motivo ou nota" />
+
+        <button class="btn" type="submit">Retirar R$</button>
+        <a class="secondary" href="#top">Cancelar</a>
+        <div class="small">Ao enviar, você concorda com os termos de saque. Esta é apenas uma demonstração.</div>
+      </form>
+    </section>
+  </main>
+
+  <div id="success">
+    <div class="success-card">
+      <h3>Solicitação de Saque Enviada</h3>
+      <p>Recebemos sua solicitação de saque. Um código de referência foi gerado para seus registros.</p>
+      <div class="muted-row"><span>Referência</span><strong>#WP-8342-AC</strong></div>
+      <div class="muted-row"><span>Método</span><span>Transferência bancária</span></div>
+      <div class="muted-row"><span>Valor</span><strong>R$ 4.500,00</strong></div>
+      <a class="close-link" href="#top">Voltar</a>
+    </div>
+  </div>
+</body>
+</html>
